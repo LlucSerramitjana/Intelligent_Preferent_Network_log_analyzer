@@ -1,0 +1,14 @@
+# Ignorar archivos txt con datos privados
+*.txt
+
+# Ignorar archivos Excel generados por el programa
+*.xlsx
+*.xls
+
+# Ignorar carpetas de entornos virtuales
+venv/
+.env
+
+# Ignorar cache de Python
+__pycache__/
+*.pyc
