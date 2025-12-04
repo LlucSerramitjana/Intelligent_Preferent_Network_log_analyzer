@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+import os
 
 LOG_FILE = 'logs.txt'
 OUTPUT_EXCEL = 'steering_events.xlsx'
@@ -36,7 +37,7 @@ with open(LOG_FILE, 'r', encoding='utf-8') as f:
                 action_candidates.append(parts[idx])
         action = action_candidates[0] if action_candidates else ''
 
-        # Extraer IPNLogic y PNLogic con regex
+        # Extraer IPNLogic y PNLogic
         ipn_logic_match = re.search(r'IPNLogic:\s*([^;]+)', line)
         pn_logic_match = re.search(r'PNLogic:\s*([^;]+)', line)
 
@@ -58,9 +59,18 @@ with open(LOG_FILE, 'r', encoding='utf-8') as f:
             'IPNLogic': ipn_logic
         })
 
-# Crear DataFrame y guardar Excel
+# Crear DataFrame
 FIELDS = ['IMSI', 'Timestamp', 'Operator', 'Country', 'Action', 'Description', 'IPNLogic']
 df = pd.DataFrame(rows, columns=FIELDS)
-df.to_excel(OUTPUT_EXCEL, index=False)
 
-print(f'Excel generado correctamente: {OUTPUT_EXCEL}')
+# --- Lógica para versiones infinitas ---
+base_name, ext = os.path.splitext(OUTPUT_EXCEL)
+counter = 0
+final_name = OUTPUT_EXCEL
+
+while os.path.exists(final_name):
+    counter += 1
+    final_name = f"{base_name}({counter}){ext}"
+
+df.to_excel(final_name, index=False)
+print(f'Excel generado correctamente: {final_name}')
